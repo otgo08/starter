@@ -56,6 +56,7 @@ var uiController = (function() {
         document.querySelector(DOMstrings.percentageLabel).textContent =
           tusuv.huvi;
       }
+
     },
 
     deleteListItem: function(id) {
@@ -140,7 +141,15 @@ var financeController = (function() {
       data.tusuv = data.totals.inc - data.totals.exp;
 
       // Орлого зарлагын хувийг тооцоолно
-      data.huvi = Math.round((data.totals.exp / data.totals.inc) * 100);
+      var updateHuvi = function(){
+        
+      }
+      if(data.totals.inc !== 0 ) {
+        data.huvi = Math.round((data.totals.exp / data.totals.inc) * 100);
+      } else {
+        data.huvi = 0;
+      }
+      
     },
 
     tusviigAvah: function() {
@@ -207,15 +216,21 @@ var appController = (function(uiController, financeController) {
       uiController.addListItem(item, input.type);
       uiController.clearFields();
 
-      // 4. Төсвийг тооцоолно
-      financeController.tusuvTootsooloh();
+      // Төсвийг шинээр тооцоолоод дэлгэцэнд үзүүлнэ.
+      updateTusuv();
 
-      // 5. Эцсийн үлдэгдэл,
-      var tusuv = financeController.tusviigAvah();
-
-      // 6. Төсвийн тооцоог дэлгэцэнд гаргана.
-      uiController.tusviigUzuuleh(tusuv);
     }
+  };
+
+  var updateTusuv = function() {
+    // 4. Төсвийг тооцоолно
+    financeController.tusuvTootsooloh();
+
+    // 5. Эцсийн үлдэгдэл,
+    var tusuv = financeController.tusviigAvah();
+
+    // 6. Төсвийн тооцоог дэлгэцэнд гаргана.
+    uiController.tusviigUzuuleh(tusuv);
   };
 
   var setupEventListeners = function() {
@@ -251,6 +266,8 @@ var appController = (function(uiController, financeController) {
           uiController.deleteListItem(id);
 
           // 3. Үлдэгдэл тооцоог шинэчилж харуулна.
+          // Төсвийг шинээр тооцоолоод дэлгэцэнд үзүүлнэ.
+          updateTusuv();
         }
       });
   };
